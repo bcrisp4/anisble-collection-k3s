@@ -1,0 +1,7 @@
+---
+# the url of the k3s github project
+k3s_github_url: https://github.com/rancher/k3s
+
+# url used to query k3s release channels
+k3s_release_channels_url: https://update.k3s.io/v1-release/channels
+
