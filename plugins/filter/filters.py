@@ -1,4 +1,4 @@
-def to_cli_flag(v, *args, **kw):
+def to_cli_flag(v):
     flag = list(v)[0]
     value = list(v.values())[0]
     

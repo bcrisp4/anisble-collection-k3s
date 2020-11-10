@@ -1,2 +1,3 @@
 ---
-# tasks file for master
+- name: configure k3s service
+  include_tasks: service.yml
