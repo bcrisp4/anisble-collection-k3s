@@ -1,0 +1,19 @@
+galaxy_info:
+  author: Ben Crisp
+  description: Install k3s (lightweight kubernetes)
+
+  license: GPL-2.0-or-later
+
+  min_ansible_version: 2.1
+
+  platforms:
+   - name: Debian
+     versions:
+     - 10
+
+  galaxy_tags:
+    - k3s
+    - rancher
+    - kubernetes
+
+dependencies: []
