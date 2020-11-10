@@ -1,4 +1,4 @@
-# Ansible Collection - bcrisp4.k3s
+# ansible-collection-k3s
 
 A collections of roles for deploying k3s (lightweight Kubernetes)
 
