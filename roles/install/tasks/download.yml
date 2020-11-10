@@ -1,0 +1,29 @@
+---
+- name: get ths k3s OS architecture
+  ansible.builtin.set_fact:
+    k3s_architecture: >-
+      {%- if ansible_architecture == 'x86_64' -%}
+      amd64
+      {%- elif ansible_architecture == 'aarch64' -%}
+      arm64
+      {%- elif ansible_architecture | regex_search('^arm.*') -%}
+      armhf
+      {%- else -%}
+      unknown
+      {%- endif -%}
+  failed_when: k3s_architecture == 'unknown'
+
+- name: check if k3s binary already exists
+  ansible.builtin.stat:
+    path: "{{ k3s_bin_dir }}/k3s"
+  register: _k3s_bin_stat
+
+- name: download k3s binary
+  ansible.builtin.get_url:
+    url: "{{ k3s_github_url }}/releases/download/{{ k3s_version }}/k3s{{ (k3s_architecture != 'amd64')|ternary(('_' ~ k3s_architecture), '') }}"
+    checksum: "sha256:{{ k3s_github_url }}/releases/download/{{ k3s_version }}/sha256sum-{{ k3s_architecture }}.txt"
+    dest: "{{ k3s_bin_dir }}/k3s"
+    owner: "{{ k3s_bin_owner }}"
+    group: "{{ k3s_bin_group }}"
+    mode: "{{ k3s_bin_mode }}"
+  when: (k3s_allow_replace_bin | bool == true) or (_k3s_bin_stat.stat.exists == false)
