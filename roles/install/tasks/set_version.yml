@@ -1,0 +1,22 @@
+---
+- name: using user-specified k3s version
+  ansible.builtin.set_fact:
+    k3s_version: "{{ k3s_version }}"
+  when: k3s_version is defined and k3s_version != None
+
+- name: get available k3s releases
+  ansible.builtin.uri:
+    url: "{{ k3s_release_channels_url }}"
+  register: _k3s_releases
+  check_mode: no
+  when: k3s_version is not defined
+
+- name: set the k3s version to the current {{ k3s_channel }} release
+  ansible.builtin.set_fact:
+    k3s_version: "{{ (_k3s_releases.json.data | default([{'id': k3s_channel, 'latest': 'unknown'}]) | selectattr('id', 'search', k3s_channel) | first).latest }}"
+  failed_when: k3s_version == 'unknown'
+  when: k3s_version is not defined
+
+- name: "using k3s version {{ k3s_version }}"
+  ansible.builtin.debug:
+    msg: "Using k3s version {{ k3s_version }}"
