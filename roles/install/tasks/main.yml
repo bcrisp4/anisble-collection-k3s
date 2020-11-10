@@ -1,0 +1,5 @@
+- name: determine which k3s version to install
+  include_tasks: set_version.yml
+
+- name: download and install k3s binary
+  include_tasks: download.yml
