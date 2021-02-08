@@ -1,0 +1,20 @@
+---
+- name: ensure the k3s systemd unit file is in the correct state
+  ansible.builtin.template:
+    src: k3s.service.jinja2
+    dest: "{{ k3s_systemd_dir }}/{{ k3s_systemd_unit_name }}.service"
+    owner: "{{ k3s_systemd_unit_owner }}"
+    group: "{{ k3s_systemd_unit_group }}"
+    mode: "{{ k3s_systemd_unit_mode }}"
+  notify: 
+    - reload systemd
+    - restart k3s
+
+- name: flush handlers
+  meta: flush_handlers
+
+- name: ensure the k3s service is started and enabled
+  ansible.builtin.service:
+    name: "{{ k3s_systemd_unit_name }}"
+    state: started
+    enabled: yes

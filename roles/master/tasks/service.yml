@@ -1,8 +1,0 @@
----
-- name: ensure the k3s.service systemd unit file is in the correct state
-  ansible.builtin.template:
-    src: k3s.service.jinja2
-    dest: "{{ k3s_systemd_dir }}/k3s.service"
-    owner: "{{ k3s_systemd_unit_owner }}"
-    group: "{{ k3s_systemd_unit_group }}"
-    mode: "{{ k3s_systemd_unit_mode }}"
