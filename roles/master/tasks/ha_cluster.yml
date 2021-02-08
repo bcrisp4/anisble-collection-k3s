@@ -1,0 +1,37 @@
+---
+- name: check that we have the minimum required number of server nodes for a HA cluster
+  ansible.builtin.fail:
+    msg: "At least 2 server nodes are required for a HA cluster, but only {{ play_hosts|length }} provided"
+  when: play_hosts|length < 2
+
+- name: primary server node not specified, choosing one automatically
+  ansible.builtin.set_fact:
+    k3s_primary_server_node: "{{ play_hosts[0] }}"
+  when: k3s_primary_server_node == ''
+
+- name: "the primary server node is {{ k3s_primary_server_node }}"
+  ansible.builtin.debug:
+    msg: "the primary server node is {{ k3s_primary_server_node }}"
+
+- name: configure the k3s service on the primary server node
+  include_tasks: common/service.yml
+  when: inventory_hostname == k3s_primary_server_node
+
+- name: get the k3s node token from the primary server node
+  ansible.builtin.slurp:
+    src: "{{ k3s_node_token_file }}"
+  register: __k3s_node_token
+  when: (k3s_node_token == '') and (inventory_hostname == k3s_primary_server_node)
+
+- name: set the k3s node token
+  ansible.builtin.set_fact:
+    k3s_node_token: "{{ hostvars[k3s_primary_server_node]['__k3s_node_token']['content']|b64decode }}"
+  when: k3s_node_token == ''
+
+- name: ensure the k3s node token file is in the correct state
+  ansible.builtin.copy:
+    content: "{{ k3s_node_token }}"
+    dest: "{{ k3s_node_token_file }}"
+    owner: "{{ k3s_node_token_owner }}"
+    group: "{{ k3s_node_token_group }}"
+    mode: "{{ k3s_node_token_mode }}"

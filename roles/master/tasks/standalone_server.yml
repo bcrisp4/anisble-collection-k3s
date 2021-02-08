@@ -1,0 +1,3 @@
+---
+- name: configure the k3s service
+  include_tasks: common/service.yml
