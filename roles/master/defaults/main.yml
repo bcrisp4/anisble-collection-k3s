@@ -1,4 +1,21 @@
 ---
+# setup multiple k3s servers in a HA cluster configuration.
+# if False, just setup 1 or more standalone server instances
+k3s_ha_cluster: True
+
+# only relevant in HA cluster configurations. which server 
+# node should be setup first to seed the cluster? If not 
+# specified the first host in play_hosts is used
+k3s_primary_server_node: ''
+
+# If not provided then a token from one of the server nodes will be used
+k3s_node_token: ''
+k3s_node_token_owner: root
+k3s_node_token_group: root
+k3s_node_token_mode: u=r,go=
+
+k3s_node_token_file: /var/lib/rancher/k3s/server/token
+
 k3s_config: "{{ k3s_default_config }}"
 
 # directory where the k3s binary is installed
