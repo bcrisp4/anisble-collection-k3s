@@ -1,2 +1,50 @@
 ---
-# defaults file for master
+# setup multiple k3s servers in a HA cluster configuration.
+# if False, just setup 1 or more standalone server instances
+k3s_ha_cluster: True
+
+# only relevant in HA cluster configurations. which server 
+# node should be setup first to seed the cluster? If not 
+# specified the first host in play_hosts is used
+k3s_primary_server_node: ''
+
+# If not provided then a token from one of the server nodes will be used
+k3s_node_token: ''
+k3s_node_token_owner: root
+k3s_node_token_group: root
+k3s_node_token_mode: u=r,go=
+
+k3s_node_token_file: /var/lib/rancher/k3s/server/token
+
+k3s_config: "{{ k3s_default_config }}"
+
+# directory where the k3s binary is installed
+k3s_bin_dir: /usr/local/bin
+
+# where should the k3s service systemd unit file be installed?
+k3s_systemd_dir: /etc/systemd/system
+# and what should it be called?
+k3s_systemd_unit_name: k3s
+
+# k3s systemd unit file permissions
+k3s_systemd_unit_owner: root
+k3s_systemd_unit_group: root
+k3s_systemd_unit_mode: ugo=r
+
+# systemd unit options
+k3s_systemd_unit_Description: Lightweight Kubernetes
+k3s_systemd_unit_Documentation: https://k3s.io
+k3s_systemd_unit_Type: notify
+k3s_systemd_unit_EnvironmentFile: "{{ k3s_systemd_dir }}/{{ k3s_systemd_unit_name }}.service.env"
+k3s_systemd_unit_KillMode: process
+k3s_systemd_unit_Delegate: 'yes'
+k3s_systemd_unit_LimitNOFILE: 1048576
+k3s_systemd_unit_LimitNPROC: infinity
+k3s_systemd_unit_LimitCORE: infinity
+k3s_systemd_unit_TasksMax: infinity
+k3s_systemd_unit_TimeoutStartSec: 0
+k3s_systemd_unit_Restart: always
+k3s_systemd_unit_RestartSec: 5s
+k3s_systemd_unit_ExecStartPre:
+  - "-/sbin/modprobe br_netfilter"
+  - "-/sbin/modprobe overlay"

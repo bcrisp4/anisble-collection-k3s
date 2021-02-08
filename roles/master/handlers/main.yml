@@ -1,2 +1,9 @@
 ---
-# handlers file for master
+- name: reload systemd
+  ansible.builtin.systemd:
+    daemon_reload: yes
+
+- name: restart k3s
+  ansible.builtin.service:
+    name: "{{ k3s_systemd_unit_name }}"
+    state: restarted

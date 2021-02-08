@@ -1,2 +1,8 @@
 ---
-# tasks file for master
+- name: configure a highly available k3s cluster with multiple server nodes
+  include_tasks: ha_cluster.yml
+  when: k3s_ha_cluster == True
+
+- name: configure one or more standalone k3s servers
+  include_tasks: standalone_server.yml
+  when: k3s_ha_cluster == False

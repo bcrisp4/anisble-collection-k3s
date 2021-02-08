@@ -1,0 +1,37 @@
+# {{ ansible_managed | default("Managed by Ansible!") }}
+[Unit]
+Description={{ k3s_systemd_unit_Description }}
+Documentation={{ k3s_systemd_unit_Documentation }}
+Wants=network-online.target
+After=network-online.target
+
+[Install]
+WantedBy=multi-user.target
+
+[Service]
+Type={{ k3s_systemd_unit_Type }}
+EnvironmentFile={{ k3s_systemd_unit_EnvironmentFile }}
+KillMode={{ k3s_systemd_unit_KillMode }}
+Delegate={{ k3s_systemd_unit_Delegate }}
+LimitNOFILE={{ k3s_systemd_unit_LimitNOFILE }}
+LimitNPROC={{ k3s_systemd_unit_LimitNPROC }}
+LimitCORE={{ k3s_systemd_unit_LimitCORE }}
+TasksMax={{ k3s_systemd_unit_TasksMax }}
+TimeoutStartSec={{ k3s_systemd_unit_TimeoutStartSec }}
+Restart={{ k3s_systemd_unit_Restart  }}
+RestartSec={{ k3s_systemd_unit_RestartSec }}
+{% for i in k3s_systemd_unit_ExecStartPre %}
+ExecStartPre={{ i }}
+{% endfor %}
+ExecStart={{ k3s_bin_dir }}/k3s \
+    server \
+{% for k, v in k3s_config|dictsort %}
+{% set cli_flag = {k: v|default(None)} | bcrisp4.k3s.cliflag %}
+{% if cli_flag is string %}
+       '{{ cli_flag }}' \
+{% else %}
+{% for i in cli_flag %}
+       '{{ i }}' \
+{% endfor %}
+{% endif %}
+{% endfor %}
